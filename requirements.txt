@@ -1,0 +1,5 @@
+Scikit-learn==1.7.2
+Pandas==2.2.3
+FastAPI==0.115.12
+Uvicorn==0.34.0
+Joblib==1.5.1

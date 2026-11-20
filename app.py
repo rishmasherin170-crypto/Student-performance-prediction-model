@@ -1,0 +1,42 @@
+import pandas as pd
+from fastapi import FastAPI,HTTPException
+import joblib
+
+app = FastAPI()
+
+model = joblib.load("models/student_model.pkl")
+
+
+@app.get("/")
+def home():
+    return {"message": "Student Performance prediction api running"}
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+
+class StudentData(BaseModel):
+    study_hours: float
+    attendance: float
+    previous_marks: float
+
+@app.post("/predict")
+def predict(student: StudentData):
+
+    try:
+        input_data = pd.DataFrame([{
+            "study_hours": student.study_hours,
+            "attendance": student.attendance,
+            "previous_marks": student.previous_marks
+        }])
+
+        prediction = model.predict(input_data)
+
+        return {
+            "predicted_result": str(prediction[0])
+        }
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Prediction failed: {str(e)}"
+        )
